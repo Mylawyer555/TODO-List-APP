@@ -1,121 +1,72 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './Todo.css'
-import  {useState} from 'react'
+import { useState } from 'react'
+
 
 const Todo = () => {
     
     
-    const [tasks, setTasks] = useState([]);
-    const [newTask, setNewTask] = useState("");
-    const [editing, setEditing] = useState(false);
-    const [currentIndex, setCurrentIndex] = (null);
-    const [updatedText, setUpdatedText] = ("");
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState("");
+  const [showInput, setShowInput] = useState(false);
+  
+  useEffect
+  const handleInputChange = (event) => {
+    setNewTask(event.target.value);
+  }
 
-
-    function handleInputChange(event) {
-        setNewTask(event.target.value);
+  const addTask = () => {
+    if (newTask.trim() !== "") {
+      setTasks(tasks => [...tasks, newTask]);
+      setNewTask("");
     }
+    setShowInput(false)
+  }
 
-    function addTask() {
-        if (newTask.trim() !== "") {
-            setTasks(tasks=> [...tasks, newTask]);
-             setNewTask("");
-        }
+  const deleteTask = (index) => {
+    const updatedTasks = tasks.filter((elem, i) => i !== index);
+    setTasks(updatedTasks);
+  }
+  
 
-        
-    }
-
-    function deleteTask(index) {
-        const updatedTasks = tasks.filter((elem, i) => i !== index);
-        setTasks(updatedTasks);
-    }
-
-    function moveTaskUp(index) {
-        
-    }
-
-    function moveTaskDown(index) {
-        
-    }
-
-    function editTasks(index) {
-        setEditing(true);
-        setCurrentIndex(index);
-        setUpdatedText(tasks[index]);
-    };
-
-    function handleSaveTask () {
-        const handleNewUpdate = tasks.map((task, index) =>
-            index === currentIndex ? setUpdatedText : task
-        )
-
-        setTasks(handleNewUpdate);
-        setEditing(false);
-        setCurrentIndex(null);
-        setUpdatedText("")
-       
-
-    }
-
-    const filterTasks = tasks.filter((task) =>
-        task.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-
+  
   return (
-    <div className="Todo-wrapper">
-      <h1>To-Do-list</h1>
+    <div className="Todo-wrapper"  >
+      <div className="up">
+       <h1>To-Do-list</h1>
+        
+      </div>
       <div className="down">
-        <div className="input-txt">
+       {showInput &&  <div className="input-txt">
           <input
             type="text"
-            placeholder="Enter New task"
+            placeholder='Enter a task..'
             value={newTask}
-            onChange={handleInputChange}
+            onChange={(handleInputChange)}
           />
-          <button className="addButton" onClick={addTask}>
-            ADD
-          </button>
-        </div>
 
+          <button className='addButton' onClick={addTask}>ADD</button>
+        </div> }
+        
+       
         <div className="tasks">
-          {filterTasks.map((task, index) => (
+          <h4>Today's Task</h4>
+          {tasks.map((task, index) =>
+            
             <div className="loop-task" key={index}>
-              {editing && currentIndex === index ? (
-                <input
-                  type="text"
-                  value={updatedText}
-                  onChange={(e) => setUpdatedText(e.target.value)}
-                />
-              ) : (
-                task
-              )}
+              <p className='task-txt'>
+                {task}
+              </p>
 
-              {editing && currentIndex === index ? (
-                <button onClick={handleSaveTask}>Done</button>
-              ) : (
-                <>
-                  <button className="edit-btn" onClick={() => editTasks(index)}>
-                    Edit
-                  </button>
-                  <button
-                    className="delete-btn"
-                    onClick={() => deleteTask(index)}
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
-
-              {/* <span className="span-txt">{task}</span> */}
-              
+              <button className='delete-btn' onClick={() => deleteTask(index)}>delete</button>             
             </div>
-          ))}
+          
+          )}
         </div>
 
-        <div className="round-plus">
-          <h1>+</h1>
-        </div>
+        <div className="plus" onClick={() => setShowInput(true)}>
+          <h4>+</h4>
+       </div>
       </div>
     </div>
   );
